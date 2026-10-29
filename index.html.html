@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Flores Amarillas y una Carta</title>
+<style>
+  :root{
+    --sky-top:#8ec9f0;
+    --sky-mid:#bfe3f7;
+    --sky-bottom:#fff3d0;
+    --sun:#ffe27a;
+    --sun-glow:#fff6c9;
+    --cloud:#ffffff;
+    --grass-1:#6fbf5a;
+    --grass-2:#5aa04a;
+    --grass-3:#4c8a3f;
+    --stem:#3f7d3a;
+    --leaf:#4f9a4a;
+    --petal:#ffd400;
+    --petal-dark:#ffb400;
+    --center:#7a4a12;
+    --center-dot:#5c380c;
+    --envelope:#fdf6e8;
+    --envelope-shadow:#e3d3ac;
+    --envelope-flap:#f7ecd0;
+    --seal:#c23b3b;
+    --seal-dark:#9c2c2c;
+    --paper:#fffaf0;
+    --ink:#5a3d1f;
+    --accent:#c23b3b;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --sky-top:#0b1a2b;
+      --sky-mid:#152a40;
+      --sky-bottom:#2a2436;
+      --paper:#f3e8d0;
+    }
+  }
+  :root[data-theme="dark"]{
+    --sky-top:#0b1a2b;
+    --sky-mid:#152a40;
+    --sky-bottom:#2a2436;
+    --paper:#f3e8d0;
+  }
+
+  html,body{
+    height:100%;
+    margin:0;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;}
+
+  body{
+    min-height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    background:linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-mid) 45%, var(--sky-bottom) 100%);
+    font-family:'Segoe UI', system-ui, -apple-system, sans-serif;
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  h1{
+    color:#5b4300;
+    text-align:center;
+    margin-top:calc(env(safe-area-inset-top,0px) + 20px);
+    margin-bottom:0;
+    font-size:clamp(1.4rem, 4vw, 2.2rem);
+    text-shadow:0 1px 2px rgba(255,255,255,0.6);
+    z-index:5;
+  }
+
+  .subtitle{
+    color:#7a6420;
+    margin-top:6px;
+    margin-bottom:10px;
+    font-size:0.95rem;
+    text-align:center;
+    z-index:5;
+  }
+
+  .field{
+    position:relative;
+    width:100%;
+    max-width:1000px;
+    height:min(52vh, 460px);
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    gap:1.5vw;
+    padding-bottom:10px;
+    z-index:2;
+  }
+
+  .flower-wrap{
+    position:relative;
+    width:14%;
+    max-width:150px;
+    min-width:70px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  .flower-wrap:nth-child(1){ transform: translateY(6%); }
+  .flower-wrap:nth-child(2){ transform: translateY(-4%); }
+  .flower-wrap:nth-child(3){ transform: translateY(-14%); }
+  .flower-wrap:nth-child(4){ transform: translateY(-2%); }
+  .flower-wrap:nth-child(5){ transform: translateY(8%); }
+
+  svg.flower{
+    width:100%;
+    height:auto;
+    display:block;
+    overflow:visible;
+  }
+
+  .stem{
+    stroke:var(--stem);
+    stroke-width:6;
+    fill:none;
+    stroke-linecap:round;
+    stroke-dasharray:200;
+    stroke-dashoffset:200;
+    animation:growStem 1.1s ease-out forwards;
+  }
+
+  .leaf{
+    fill:var(--leaf);
+    opacity:0;
+    transform-origin:center;
+    animation:showLeaf 0.8s ease-out forwards;
+  }
+
+  .petal{
+    fill:var(--petal);
+    stroke:var(--petal-dark);
+    stroke-width:1;
+    transform-box:fill-box;
+    transform-origin:50% 100%;
+    transform:scale(0.05) rotate(0deg);
+    animation:openPetal 0.9s cubic-bezier(.34,1.56,.64,1) forwards;
+  }
+
+  .center-circle{
+    fill:var(--center);
+    opacity:0;
+    animation:showCenter 0.6s ease-out forwards;
+  }
+  .center-dot{
+    fill:var(--center-dot);
+    opacity:0;
+    animation:showCenter 0.6s ease-out forwards;
+  }
+
+  @keyframes growStem{ to{ stroke-dashoffset:0; } }
+  @keyframes showLeaf{ to{ opacity:1; } }
+  @keyframes openPetal{
+    0%{ transform:scale(0.05) rotate(-8deg); opacity:0; }
+    60%{ opacity:1; }
+    100%{ transform:scale(1) rotate(0deg); opacity:1; }
+  }
+  @keyframes showCenter{ to{ opacity:1; } }
+
+  .flower-wrap:nth-child(1) .stem{ animation-delay:0s; }
+  .flower-wrap:nth-child(2) .stem{ animation-delay:0.15s; }
+  .flower-wrap:nth-child(3) .stem{ animation-delay:0.3s; }
+  .flower-wrap:nth-child(4) .stem{ animation-delay:0.45s; }
+  .flower-wrap:nth-child(5) .stem{ animation-delay:0.6s; }
+
+  .flower-wrap:nth-child(1) .leaf{ animation-delay:0.4s; }
+  .flower-wrap:nth-child(2) .leaf{ animation-delay:0.55s; }
+  .flower-wrap:nth-child(3) .leaf{ animation-delay:0.7s; }
+  .flower-wrap:nth-child(4) .leaf{ animation-delay:0.85s; }
+  .flower-wrap:nth-child(5) .leaf{ animation-delay:1s; }
+
+  .flower-wrap:nth-child(1) .center-circle,
+  .flower-wrap:nth-child(1) .center-dot{ animation-delay:1.7s; }
+  .flower-wrap:nth-child(2) .center-circle,
+  .flower-wrap:nth-child(2) .center-dot{ animation-delay:1.9s; }
+  .flower-wrap:nth-child(3) .center-circle,
+  .flower-wrap:nth-child(3) .center-dot{ animation-delay:2.1s; }
+  .flower-wrap:nth-child(4) .center-circle,
+  .flower-wrap:nth-child(4) .center-dot{ animation-delay:2.3s; }
+  .flower-wrap:nth-child(5) .center-circle,
+  .flower-wrap:nth-child(5) .center-dot{ animation-delay:2.5s; }
+
+  .flower-wrap{
+    animation:sway 4s ease-in-out infinite;
+    transform-origin:bottom center;
+  }
+  .flower-wrap:nth-child(odd){ animation-direction:alternate; }
+  .flower-wrap:nth-child(2){ animation-delay:0.5s; }
+  .flower-wrap:nth-child(4){ animation-delay:0.9s; }
+
+  @keyframes sway{
+    0%,100%{ rotate:0deg; }
+    50%{ rotate:2deg; }
+  }
+
+  /* Pasto con textura de franjas */
+  .ground{
+    width:100%;
+    height:60px;
+    background:repeating-linear-gradient(
+      100deg,
+      var(--grass-1) 0px, var(--grass-1) 18px,
+      var(--grass-2) 18px, var(--grass-2) 36px,
+      var(--grass-3) 36px, var(--grass-3) 54px
+    );
+    border-top:3px solid #4a8a3d;
+    position:relative;
+    z-index:2;
+  }
+
+  /* Mariposas decorativas */
+  .butterfly{
+    position:absolute;
+    font-size:1.6rem;
+    z-index:3;
+    animation:flutter 6s ease-in-out infinite;
+    opacity:0;
+    animation-fill-mode:forwards;
+  }
+  .butterfly1{ top:28%; left:15%; animation-delay:2.6s, 3s; }
+  .butterfly2{ top:22%; left:78%; animation-delay:3s, 3.4s; }
+  @keyframes flutter{
+    0%{ opacity:0; transform:translate(0,0) rotate(0deg); }
+    10%{ opacity:1; }
+    25%{ transform:translate(15px,-10px) rotate(8deg); }
+    50%{ transform:translate(0,-18px) rotate(-6deg); }
+    75%{ transform:translate(-15px,-8px) rotate(6deg); }
+    100%{ opacity:1; transform:translate(0,0) rotate(0deg); }
+  }
+
+  .replay-btn{
+    margin:10px 0 6px;
+    padding:10px 22px;
+    border:none;
+    border-radius:999px;
+    background:#ffb400;
+    color:#4a3300;
+    font-size:1rem;
+    font-weight:600;
+    cursor:pointer;
+    box-shadow:0 3px 8px rgba(0,0,0,0.15);
+    z-index:5;
+    transition:transform 0.15s ease;
+  }
+  .replay-btn:hover{ transform:translateY(-2px); }
+  .replay-btn:active{ transform:translateY(0px) scale(0.97); }
+
+  /* ---------- SOBRE / CARTA ---------- */
+  .letter-section{
+    z-index:4;
+    padding:calc(env(safe-area-inset-top,0px) + 22px) 20px 6px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    opacity:0;
+    animation:fadeInLetter 0.9s ease-out forwards;
+    animation-delay:0.2s;
+  }
+  @keyframes fadeInLetter{ to{ opacity:1; } }
+
+  .letter-hint{
+    color:#7a6420;
+    font-size:0.85rem;
+    margin-bottom:10px;
+    text-align:center;
+  }
+
+  .envelope{
+    position:relative;
+    width:220px;
+    height:140px;
+    cursor:pointer;
+    perspective:1000px;
+    filter:drop-shadow(0 8px 14px rgba(0,0,0,0.18));
+  }
+
+  .envelope-body{
+    position:absolute;
+    inset:0;
+    background:var(--envelope);
+    border:1px solid var(--envelope-shadow);
+    border-radius:8px;
+    overflow:hidden;
+  }
+
+  /* Lineas inferiores del sobre (bolsillo en V) */
+  .envelope-pocket{
+    position:absolute;
+    left:0; right:0; bottom:0;
+    height:100%;
+    background:linear-gradient(to top right, transparent 49.4%, var(--envelope-shadow) 49.6%, var(--envelope-shadow) 50.4%, transparent 50.6%),
+               linear-gradient(to top left, transparent 49.4%, var(--envelope-shadow) 49.6%, var(--envelope-shadow) 50.4%, transparent 50.6%);
+    clip-path:polygon(0 100%, 50% 40%, 100% 100%);
+    background-color:#f2e6c4;
+  }
+
+  .envelope-flap{
+    position:absolute;
+    top:0; left:0; right:0;
+    height:74px;
+    background:var(--envelope-flap);
+    clip-path:polygon(0 0, 100% 0, 50% 100%);
+    transform-origin:top center;
+    transform:rotateX(0deg);
+    transition:transform 0.6s ease, z-index 0s;
+    z-index:3;
+    border-bottom:1px solid var(--envelope-shadow);
+  }
+
+  .seal{
+    position:absolute;
+    top:52px;
+    left:50%;
+    transform:translate(-50%,0);
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, var(--seal), var(--seal-dark));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#ffdede;
+    font-size:16px;
+    box-shadow:0 2px 4px rgba(0,0,0,0.3);
+    transition:opacity 0.3s ease, transform 0.3s ease;
+    z-index:4;
+  }
+
+  .letter-paper{
+    position:absolute;
+    left:8%;
+    right:8%;
+    top:18px;
+    bottom:10px;
+    background:var(--paper);
+    border-radius:4px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.15);
+    transform:translateY(0);
+    transition:transform 0.7s cubic-bezier(.2,.8,.2,1);
+    z-index:2;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:8px;
+    text-align:center;
+    color:var(--ink);
+    font-size:0.75rem;
+    overflow:hidden;
+  }
+
+  .envelope.open .envelope-flap{
+    transform:rotateX(180deg);
+    z-index:1;
+  }
+  .envelope.open .seal{
+    opacity:0;
+    transform:translate(-50%,0) scale(0.5);
+  }
+  .envelope.open .letter-paper{
+    transform:translateY(-70px) scale(1.02);
+  }
+
+  .letter-icon-text{
+    font-family:'Georgia', serif;
+    color:#a5824a;
+    opacity:0;
+  }
+
+  /* ---------- MODAL DE LA CARTA COMPLETA ---------- */
+  .modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(40,30,10,0.55);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    z-index:50;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.35s ease;
+  }
+  .modal-overlay.visible{
+    opacity:1;
+    pointer-events:auto;
+  }
+
+  .modal-card{
+    position:relative;
+    max-width:480px;
+    width:100%;
+    max-height:85vh;
+    overflow-y:auto;
+    background:
+      radial-gradient(circle at 0% 0%, rgba(255,255,255,0.6), transparent 40%),
+      radial-gradient(circle at 100% 100%, rgba(255,255,255,0.5), transparent 40%),
+      repeating-linear-gradient(0deg, rgba(230,213,171,0.18) 0px, rgba(230,213,171,0.18) 1px, transparent 1px, transparent 28px),
+      var(--paper);
+    border-radius:18px;
+    padding:36px 34px 30px;
+    box-shadow:0 20px 50px rgba(0,0,0,0.35), inset 0 0 0 1px rgba(230,213,171,0.6);
+    font-family:'Georgia', serif;
+    color:var(--ink);
+    transform:scale(0.85) translateY(20px);
+    transition:transform 0.4s cubic-bezier(.2,.9,.3,1.2);
+    border:2px solid #e6d5ab;
+  }
+  .modal-overlay.visible .modal-card{
+    transform:scale(1) translateY(0);
+  }
+
+  .modal-crest{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:4px;
+  }
+  .modal-crest .line{
+    flex:1;
+    max-width:60px;
+    height:1px;
+    background:linear-gradient(to right, transparent, #c9ad6e);
+  }
+  .modal-crest .line.right{
+    background:linear-gradient(to left, transparent, #c9ad6e);
+  }
+  .modal-crest .flower-emoji{
+    font-size:1.7rem;
+    filter:drop-shadow(0 1px 1px rgba(0,0,0,0.15));
+  }
+
+  .modal-title{
+    text-align:center;
+    font-size:1.5rem;
+    margin:2px 0 4px;
+    color:#8a2e2e;
+    letter-spacing:1px;
+    font-weight:600;
+  }
+
+  .modal-divider{
+    width:70%;
+    max-width:180px;
+    height:10px;
+    margin:0 auto 20px;
+    background:radial-gradient(circle, #c9ad6e 0%, #c9ad6e 15%, transparent 16%) repeat-x;
+    background-size:12px 12px;
+    opacity:0.7;
+  }
+
+  .modal-body{
+    font-size:1.02rem;
+    line-height:1.85;
+    white-space:pre-line;
+    letter-spacing:0.2px;
+  }
+
+  .modal-signature{
+    margin-top:24px;
+    text-align:right;
+    font-style:italic;
+    font-size:1.05rem;
+    color:#8a2e2e;
+  }
+
+  .modal-close{
+    position:absolute;
+    top:12px;
+    right:12px;
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(230,213,171,0.4);
+    border:none;
+    font-size:1.1rem;
+    color:#8a6b3c;
+    cursor:pointer;
+    line-height:1;
+    transition:background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+  .modal-close:hover{
+    background:#e6d5ab;
+    color:#5a3d1f;
+    transform:rotate(90deg);
+  }
+
+  @media (max-width:480px){
+    .field{ height:min(46vh, 380px); }
+    .envelope{ width:180px; height:115px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="letter-section">
+  <p class="letter-hint">Hay algo para ti... tócalo 💛</p>
+  <div class="envelope" id="envelope">
+    <div class="envelope-body">
+      <div class="envelope-pocket"></div>
+      <div class="letter-paper">
+        <span class="letter-icon-text">Para ti 💌<br><small>(toca para leer)</small></span>
+      </div>
+      <div class="envelope-flap"></div>
+      <div class="seal">❤</div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="field" id="field">
+  <span class="butterfly butterfly1">🦋</span>
+  <span class="butterfly butterfly2">🦋</span>
+</div>
+
+<div class="ground"></div>
+
+<button class="replay-btn" id="replayBtn">Volver a abrir las flores 🌸</button>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-card">
+    <button class="modal-close" id="modalClose">✕</button>
+    <div class="modal-crest">
+      <span class="line"></span>
+      <span class="flower-emoji">🌼</span>
+      <span class="line right"></span>
+    </div>
+    <h2 class="modal-title">Para ti</h2>
+    <div class="modal-divider"></div>
+    <div class="modal-body">Cada vez que veo un girasol, pienso en ti, porque al igual que ellos buscan la luz, mi corazón siempre encuentra una razón para acercarse a ti.
+
+Quise regalarte un campo entero, uno por cada motivo por el que me haces sonreír, pero entendí que ni todos los girasoles del mundo serían suficientes para expresar lo que siento.
+
+Gracias por llenar mis días de luz, por hacer especial lo sencillo y por ser esa persona que ocupa un lugar tan bonito en mi corazón.
+
+**Con todo mi cariño, hoy y siempre. 🌻❤️**
+
+
+</div>
+
+<script>
+  function createFlowerSVG(flowerBaseDelay){
+    const petalCount = 8;
+    const cx = 60, cy = 40, r = 26;
+    let petals = "";
+    for(let i=0;i<petalCount;i++){
+      const angle = (360/petalCount)*i;
+      const delay = (flowerBaseDelay + i*0.06).toFixed(2);
+      petals += `<g transform="rotate(${angle} ${cx} ${cy})">
+                   <ellipse class="petal" style="animation-delay:${delay}s"
+                     cx="${cx}" cy="${cy - r}" rx="12" ry="24"></ellipse>
+                 </g>`;
+    }
+    return `
+    <svg class="flower" viewBox="0 0 120 220" xmlns="http://www.w3.org/2000/svg">
+      <path class="stem" d="M60,220 C60,180 55,140 60,100" pathLength="200"></path>
+      <path class="leaf" d="M60,150 C40,150 28,165 25,180 C45,182 58,170 60,150 Z"></path>
+      <path class="leaf" d="M60,170 C80,168 92,182 95,197 C75,200 62,188 60,170 Z"></path>
+      <g>${petals}</g>
+      <circle class="center-circle" cx="${cx}" cy="${cy}" r="14"></circle>
+      <circle class="center-dot" cx="${cx-5}" cy="${cy-3}" r="1.6"></circle>
+      <circle class="center-dot" cx="${cx+4}" cy="${cy-5}" r="1.6"></circle>
+      <circle class="center-dot" cx="${cx+2}" cy="${cy+5}" r="1.6"></circle>
+      <circle class="center-dot" cx="${cx-4}" cy="${cy+4}" r="1.6"></circle>
+      <circle class="center-dot" cx="${cx}" cy="${cy}" r="1.8"></circle>
+    </svg>`;
+  }
+
+  function renderField(){
+    const field = document.getElementById('field');
+    // conserva las mariposas, limpia solo las flores previas
+    field.querySelectorAll('.flower-wrap').forEach(el => el.remove());
+    const count = 5;
+    for(let i=0;i<count;i++){
+      const wrap = document.createElement('div');
+      wrap.className = 'flower-wrap';
+      const petalBaseDelay = 0.9 + i*0.2;
+      wrap.innerHTML = createFlowerSVG(petalBaseDelay);
+      field.insertBefore(wrap, field.firstChild ? field.children[i] : null);
+    }
+  }
+
+  renderField();
+  document.getElementById('replayBtn').addEventListener('click', renderField);
+
+  // Sobre: click para abrir/cerrar, y si ya está abierto, abre la carta completa
+  const envelope = document.getElementById('envelope');
+  const modalOverlay = document.getElementById('modalOverlay');
+  const modalClose = document.getElementById('modalClose');
+
+  envelope.addEventListener('click', function(){
+    if(envelope.classList.contains('open')) return;
+    envelope.classList.add('open');
+    setTimeout(function(){
+      modalOverlay.classList.add('visible');
+    }, 550);
+  });
+
+  function closeModal(){
+    modalOverlay.classList.remove('visible');
+    setTimeout(function(){
+      envelope.classList.remove('open');
+    }, 350);
+  }
+  modalClose.addEventListener('click', closeModal);
+  modalOverlay.addEventListener('click', function(e){
+    if(e.target === modalOverlay) closeModal();
+  });
+</script>
+
+</body>
+</html>
